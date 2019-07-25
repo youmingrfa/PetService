@@ -9,6 +9,7 @@ import com.example.administrator.petservice.R;
 
 /**
  * 注册Activity
+ * @author rfa
  */
 public class RegisterActivity extends AppCompatActivity {
 

@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -23,9 +24,11 @@ import android.widget.TextView;
 
 import com.example.administrator.petservice.R;
 import com.example.administrator.petservice.lisenter.TextInputWatcher;
+import com.example.administrator.petservice.ui.MainActivity;
 
 /**
  * 登录Activity
+ * @author rfa
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener  {
 
@@ -271,12 +274,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+        Intent intent = null;
         switch (v.getId()) {
             case R.id.login_titleBar_iv_back:
+                intent = new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(intent);
                 finish();
                 break;
             case R.id.login_titleBar_tv_register:
-                Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+                intent = new Intent(LoginActivity.this,RegisterActivity.class);
                 startActivity(intent);
                 break;
             case R.id.login_select_tv_quickLogin:
@@ -321,7 +327,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                    ToastUtil.show(this,R.string.phone_number_incorrect);
 //                }
 //                break;
-//            case R.id.login_quick_login_btn:
+            case R.id.login_quick_login_btn:
+                intent = new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(intent);
 //                mPhoneNumber = mQuickLoginEtPhoneNumber.getText().toString();
 //                String code = mQuickLoginEtCode.getText().toString();
 //                if (LoginHelperUtil.isCodeCorrect(code) && LoginHelperUtil.isPhoneNumber(mPhoneNumber)) {
@@ -341,7 +349,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                } else {
 //                    ToastUtil.showLong(this,R.string.quick_login_input_incorrect);
 //                }
-//                break;
+                break;
 //            case R.id.login_account_login_iv_clear_username:
 //                mAccountLoginEtUsername.setText("");
 //                mAccountLoginIvClearUsername.setVisibility(View.GONE);

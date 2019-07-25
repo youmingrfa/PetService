@@ -1,6 +1,7 @@
 package com.example.administrator.petservice.ui.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.administrator.petservice.R;
 import com.example.administrator.petservice.db.RecordsDao;
+import com.example.administrator.petservice.ui.MainActivity;
 import com.zhy.view.flowlayout.FlowLayout;
 import com.zhy.view.flowlayout.TagAdapter;
 import com.zhy.view.flowlayout.TagFlowLayout;
@@ -31,12 +33,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-
 /**
  * 历史搜索Activity，主要是借用了sqlite数据库存储搜索的信息，需要改进的地方是点击搜索后需要跳转到相应的商品界面，
  * 并且需要把搜索框中的内容设置为空，此活动应该是通过点击MainActivity上方的Button进入的
+ * @author rfa
  */
-public class HistorySearchActivity extends AppCompatActivity {
+public class HistorySearchActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RecordsDao mRecordsDao;
     //默然展示词条个数
@@ -44,31 +46,77 @@ public class HistorySearchActivity extends AppCompatActivity {
     private List<String> recordList = new ArrayList<>();
     private TagAdapter mRecordsAdapter;
     private LinearLayout mHistoryContent;
+    private EditText editText;
+    private TagFlowLayout tagFlowLayout;
+    private ImageView clearAllRecords;
+    private ImageView moreArrow;
+    private TextView search;
+    private ImageView clearSearch;
+    private String username;
+    private ImageView backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE); // 去除顶部标题栏
         setContentView(R.layout.activity_history_search);
+
+
+        initView();
+        initData();
+        setClickListener();
+
+        mRecordsDao.setNotifyDataChanged(new RecordsDao.NotifyDataChanged() {
+            @Override
+            public void notifyDataChanged() {
+                initData();
+            }
+        });
+    }
+
+    private void initView(){
         //默认账号
-        String username = "007";
+        username = "007";
         //初始化数据库
         mRecordsDao = new RecordsDao(this, username);
-
-        final EditText editText = findViewById(R.id.edit_query);
-        final TagFlowLayout tagFlowLayout = findViewById(R.id.fl_search_records);
-        final ImageView clearAllRecords = findViewById(R.id.clear_all_records);
-        final ImageView moreArrow = findViewById(R.id.iv_arrow);
-        TextView search = findViewById(R.id.iv_search);
-        ImageView clearSearch = findViewById(R.id.iv_clear_search);
+        //初始化控件
+        editText = findViewById(R.id.edit_query);
+        tagFlowLayout = findViewById(R.id.fl_search_records);
+        clearAllRecords = findViewById(R.id.clear_all_records);
+        moreArrow = findViewById(R.id.iv_arrow);
+        search = findViewById(R.id.iv_search);
+        clearSearch = findViewById(R.id.iv_clear_search);
         mHistoryContent = findViewById(R.id.ll_history_content);
+        backButton = findViewById(R.id.iv_back);
+    }
 
-        initData();
+    private void initData() {
+        Observable.create(new ObservableOnSubscribe<List<String>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<String>> emitter) throws Exception {
+                emitter.onNext(mRecordsDao.getRecordsByNumber(DEFAULT_RECORD_NUMBER));
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<String>>() {
+                    @Override
+                    public void accept(List<String> s) throws Exception {
+                        recordList.clear();
+                        recordList = s;
+                        if (null == recordList || recordList.size() == 0) {
+                            mHistoryContent.setVisibility(View.GONE);
+                        } else {
+                            mHistoryContent.setVisibility(View.VISIBLE);
+                        }
+                        if (mRecordsAdapter != null) {
+                            mRecordsAdapter.setData(recordList);
+                            mRecordsAdapter.notifyDataChanged();
+                        }
+                    }
+                });
 
-        //创建历史标签适配器
-        //为标签设置对应的内容
+        //创建历史标签适配器,为标签设置对应的内容
         mRecordsAdapter = new TagAdapter<String>(recordList) {
-
             @Override
             public View getView(FlowLayout parent, int position, String s) {
                 TextView tv = (TextView) LayoutInflater.from(HistorySearchActivity.this).inflate(R.layout.tv_history,
@@ -78,7 +126,6 @@ public class HistorySearchActivity extends AppCompatActivity {
                 return tv;
             }
         };
-
 
         tagFlowLayout.setAdapter(mRecordsAdapter);
         tagFlowLayout.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
@@ -119,54 +166,14 @@ public class HistorySearchActivity extends AppCompatActivity {
             }
         });
 
-        moreArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tagFlowLayout.setLimit(false);
-                mRecordsAdapter.notifyDataChanged();
-            }
-        });
+    }
 
-        //清除所有记录
-        clearAllRecords.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog("确定要删除全部历史记录？", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        tagFlowLayout.setLimit(true);
-                        //清除所有数据
-                        mRecordsDao.deleteUsernameAllRecords();
-                    }
-                });
-            }
-        });
-
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String record = editText.getText().toString();
-                if (!TextUtils.isEmpty(record)) {
-                    //添加数据
-                    mRecordsDao.addRecords(record);
-                }
-            }
-        });
-
-        clearSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //清除搜索历史
-                editText.setText("");
-            }
-        });
-
-        mRecordsDao.setNotifyDataChanged(new RecordsDao.NotifyDataChanged() {
-            @Override
-            public void notifyDataChanged() {
-                initData();
-            }
-        });
+    private void setClickListener(){
+        moreArrow.setOnClickListener(this);
+        clearAllRecords.setOnClickListener(this);
+        search.setOnClickListener(this);
+        clearSearch.setOnClickListener(this);
+        backButton.setOnClickListener(this);
     }
 
     private void showDialog(String dialogTitle, @NonNull DialogInterface.OnClickListener onClickListener) {
@@ -177,32 +184,45 @@ public class HistorySearchActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    private void initData() {
-        Observable.create(new ObservableOnSubscribe<List<String>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<String>> emitter) throws Exception {
-                emitter.onNext(mRecordsDao.getRecordsByNumber(DEFAULT_RECORD_NUMBER));
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<String>>() {
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.iv_arrow:
+                tagFlowLayout.setLimit(false);
+                mRecordsAdapter.notifyDataChanged();
+                break;
+            //清除所有记录
+            case R.id.clear_all_records:
+                showDialog("确定要删除全部历史记录？", new DialogInterface.OnClickListener() {
                     @Override
-                    public void accept(List<String> s) throws Exception {
-                        recordList.clear();
-                        recordList = s;
-                        if (null == recordList || recordList.size() == 0) {
-                            mHistoryContent.setVisibility(View.GONE);
-                        } else {
-                            mHistoryContent.setVisibility(View.VISIBLE);
-                        }
-                        if (mRecordsAdapter != null) {
-                            mRecordsAdapter.setData(recordList);
-                            mRecordsAdapter.notifyDataChanged();
-                        }
+                    public void onClick(DialogInterface dialog, int which) {
+                        tagFlowLayout.setLimit(true);
+                        //清除所有数据
+                        mRecordsDao.deleteUsernameAllRecords();
                     }
                 });
+                break;
+            //添加数据
+            case R.id.iv_search:
+                String record = editText.getText().toString();
+                if (!TextUtils.isEmpty(record)) {
+                    mRecordsDao.addRecords(record);
+                }
+                break;
+            //清除搜索历史
+            case R.id.iv_clear_search:
+                editText.setText("");
+                break;
+            //点击返回按钮，返回主界面
+            case R.id.iv_back:
+                Intent intent = new Intent(HistorySearchActivity.this,MainActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            default:
+                break;
+        }
     }
-
 
     @Override
     protected void onDestroy() {
