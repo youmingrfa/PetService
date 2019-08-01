@@ -24,14 +24,6 @@
                 android:paddingLeft="@dimen/me_login_layout_paddingLeft"
                 android:background="@mipmap/my_login_bg"
                 android:visibility="gone">
-                <com.facebook.drawee.view.SimpleDraweeView
-                    android:id="@+id/me_login_iv_head"
-                    android:layout_width="@dimen/me_login_head_width"
-                    android:layout_height="@dimen/me_login_head_height"
-                    android:layout_marginEnd="@dimen/me_login_head_marginEnd"
-                    android:layout_centerVertical="true"
-                    android:scaleType="fitXY"
-                    app:placeholderImage="@mipmap/user_head"/>
                 <LinearLayout
                     android:id="@+id/me_login_profile_layout"
                     android:layout_width="match_parent"

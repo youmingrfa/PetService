@@ -1,4 +1,11 @@
 <resources>
+
+    //底部导航栏
+    <string name="home">主页</string>
+    <string name="pet">爱宠</string>
+    <string name="order">订单</string>
+    <string name="mine">我的</string>
+
     <string name="app_name">PetService</string>
     <string name="tab_title_home">首页</string>
     <string name="tab_title_around">周边</string>

@@ -31,15 +31,14 @@
                     <TextView
                         style="@style/more_common_item_textView_style"
                         android:text="@string/user_item_title_avatar"/>
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <ImageView
                         android:id="@+id/user_item_avatar"
                         android:layout_width="@dimen/me_login_head_width"
                         android:layout_height="@dimen/me_login_head_height"
                         android:layout_marginEnd="@dimen/me_login_head_marginEnd"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/user_item_avatar_iv_arrow"
-                        android:scaleType="fitXY"
-                        app:placeholderImage="@mipmap/user_head"/>
+                        android:scaleType="fitXY" />
                     <ImageView
                         android:id="@+id/user_item_avatar_iv_arrow"
                         style="@style/me_common_item_arrow_right_imageView_style"/>

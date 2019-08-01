@@ -18,12 +18,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-                <com.facebook.drawee.view.SimpleDraweeView
+                <ImageView
                     android:id="@+id/detail_product_photo"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/detail_photo_height"
-                    android:scaleType="centerCrop"
-                    app:placeholderImage="@mipmap/home_adver_320"/>
+                    android:scaleType="centerCrop" />
                 <View
                     style="@style/detail_view_style"/>
                 <LinearLayout

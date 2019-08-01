@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/item_home"
+        android:icon="@mipmap/icon_home_press"
+        android:title="@string/home" />
+    <item
+        android:id="@+id/item_pet"
+        android:icon="@mipmap/icon_discover_press"
+        android:title="@string/pet" />
+
+    <item
+        android:id="@+id/item_order"
+        android:icon="@mipmap/icon_list"
+        android:title="@string/order" />
+
+    <item
+        android:id="@+id/item_mine"
+        android:icon="@mipmap/icon_mine_press"
+        android:title="@string/mine" />
+
+</menu>

@@ -27,13 +27,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true">
-                <com.facebook.drawee.view.SimpleDraweeView
+                <ImageView
                     android:id="@+id/good_photo"
                     android:layout_width="@dimen/good_image_width"
                     android:layout_height="@dimen/good_image_height"
                     android:layerType="software"
-                    android:scaleType="centerCrop"
-                    fresco:placeholderImage="@mipmap/default_list_pic"/>
+                    android:scaleType="centerCrop" />
                 <ImageView
                     android:id="@+id/good_icon"
                     android:layout_width="@dimen/good_image_width"

@@ -18,6 +18,7 @@
     <color name="app_green">#ff1db9a7</color>
     <color name="app_green_normal">#ff20c9b5</color>
 
+    <color name="tab_bg">#f1f1f1</color>
     <color name="tab_selected">#fb773b</color>
     <color name="tab_normal">#c5c9d0</color>
 
