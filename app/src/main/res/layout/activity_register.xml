@@ -40,7 +40,9 @@
                     style="@style/login_editText_style"
                     android:inputType="number"
                     android:maxLength="11"
-                    android:hint="@string/login_input_phoneNumber_hint"/>
+                    android:hint="@string/login_input_phoneNumber_hint">
+                    <requestFocus />
+                </EditText>
                 <ImageView
                     android:id="@+id/register_iv_clear_phoneNumber"
                     style="@style/common_clear_input_imageView_style"
@@ -60,9 +62,14 @@
                 <Button
                     android:id="@+id/register_btn_getCode"
                     style="@style/login_btn_getCode_style"/>
+                <TextView
+                    android:id="@+id/tip"
+                    style="@style/login_tip_getCode_style"
+                    android:visibility="gone" />
                 <ImageView
                     android:id="@+id/register_iv_clear_code"
-                    android:layout_toLeftOf="@+id/register_btn_getCode"
+                    android:layout_toStartOf="@+id/register_btn_getCode"
+                    android:layout_toLeftOf="@id/tip"
                     android:layout_alignParentRight="false"
                     style="@style/common_clear_input_imageView_style"
                     android:visibility="gone"/>
@@ -105,7 +112,6 @@
         </LinearLayout>
     </ScrollView>
 
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -116,8 +122,10 @@
         android:textColor="@color/gray01"/>
 
     <Button
-        android:id="@+id/register_btn_register"
-        style="@style/login_btn_style"
-        android:text="@string/login_titleBar_register"/>
+        android:id="@+id/save_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="@string/login_titleBar_register" />
 
 </LinearLayout>

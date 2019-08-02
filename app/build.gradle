@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.mob.sdk'
 
 android {
     compileSdkVersion 28
@@ -17,6 +18,18 @@ android {
         }
     }
     buildToolsVersion '28.0.2'
+}
+
+MobSDK {
+    appKey "2be7e7688e5ea"
+    appSecret "7b9ccec7cf2b8d1baa75b9c4e38a2e38"
+
+    SMSSDK {
+        //默认使用GUI，若不使用GUI，通过以下开关关闭
+        gui false
+        //若使用GUI的自动填充验证码功能，需打开此设置
+        //autoSMS true
+    }
 }
 
 dependencies {

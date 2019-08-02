@@ -209,6 +209,20 @@
         <item name="android:textSize">@dimen/login_content_size</item>
     </style>
 
+    <!--验证提示-->
+    <style name="login_tip_getCode_style" parent="Base.Widget.AppCompat.Button">
+        <item name="android:layout_width">@dimen/login_quick_login_getCode_width</item>
+        <item name="android:layout_height">@dimen/login_quick_login_getCode_height</item>
+        <item name="android:layout_marginRight">@dimen/login_quick_login_getCode_marginRight</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:background">@drawable/btn_get_code_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text">提示信息</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/login_content_size</item>
+    </style>
+
     <!--切换显示明文密码-->
     <style name="login_checkBox_style">
         <item name="android:layout_width">@dimen/login_account_login_checkBox_width</item>
