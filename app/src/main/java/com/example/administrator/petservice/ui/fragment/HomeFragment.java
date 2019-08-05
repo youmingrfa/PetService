@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.example.administrator.petservice.R;
 import com.example.administrator.petservice.ui.activity.HistorySearchActivity;
@@ -20,7 +21,7 @@ import static com.example.administrator.petservice.ui.utils.ImageUtil.imageUrls;
 
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
-	private Button searchBtn;
+	private LinearLayout searchBar;
 	private Banner banner;
 
 	@Override
@@ -36,7 +37,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 	}
 
 	private void initView(View view) {
-		searchBtn = view.findViewById(R.id.search_btn);
+		searchBar = view.findViewById(R.id.titleBar_search_ll);
 		banner = view.findViewById(R.id.banner);
 	}
 
@@ -52,14 +53,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 	}
 
 	private void setClickListener(){
-		searchBtn.setOnClickListener(this);
+		searchBar.setOnClickListener(this);
 	}
 
 	@Override
 	public void onClick(View v) {
 		Intent intent = null;
 		switch ((v.getId())){
-			case R.id.search_btn:
+			case R.id.titleBar_search_ll:
 				intent = new Intent(getActivity(),HistorySearchActivity.class);
 				startActivity(intent);
 				break;

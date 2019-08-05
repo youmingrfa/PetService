@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,6 +22,7 @@ import android.widget.TextView;
 import com.example.administrator.petservice.R;
 import com.example.administrator.petservice.db.RecordsDao;
 import com.example.administrator.petservice.ui.MainActivity;
+import com.example.administrator.petservice.ui.adapter.HotSearchAdapter;
 import com.zhy.view.flowlayout.FlowLayout;
 import com.zhy.view.flowlayout.TagAdapter;
 import com.zhy.view.flowlayout.TagFlowLayout;
@@ -44,16 +48,18 @@ public class HistorySearchActivity extends AppCompatActivity implements View.OnC
     //默然展示词条个数
     private final int DEFAULT_RECORD_NUMBER = 10;
     private List<String> recordList = new ArrayList<>();
-    private TagAdapter mRecordsAdapter;
-    private LinearLayout mHistoryContent;
-    private EditText editText;
-    private TagFlowLayout tagFlowLayout;
-    private ImageView clearAllRecords;
-    private ImageView moreArrow;
-    private TextView search;
-    private ImageView clearSearch;
     private String username;
-    private ImageView backButton;
+
+    private LinearLayout mHistoryContent;
+    private TagFlowLayout tagFlowLayout;
+
+    private ImageView clearAllRecords,clearSearch,backButton,moreArrow;
+    private TextView search;
+    private EditText editText;
+    private RecyclerView hotSearch;
+
+    private TagAdapter mRecordsAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +94,8 @@ public class HistorySearchActivity extends AppCompatActivity implements View.OnC
         clearSearch = findViewById(R.id.iv_clear_search);
         mHistoryContent = findViewById(R.id.ll_history_content);
         backButton = findViewById(R.id.iv_back);
+
+        hotSearch = findViewById(R.id.rv_hot_search);
     }
 
     private void initData() {
@@ -165,6 +173,14 @@ public class HistorySearchActivity extends AppCompatActivity implements View.OnC
                 }
             }
         });
+        final StaggeredGridLayoutManager layoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+        hotSearch.setLayoutManager(layoutManager);
+
+        HotSearchAdapter hotSearchAdapter = new HotSearchAdapter(HistorySearchActivity.this);
+        hotSearchAdapter.notifyDataSetChanged();
+        hotSearch.setAdapter(hotSearchAdapter);
 
     }
 

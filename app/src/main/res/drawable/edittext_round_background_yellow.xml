@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="@color/title_bar_search_color"/>
+    <solid android:color="#EDEDED"/>
     <corners
         android:topLeftRadius="@dimen/round_btn_green_tk_corner"
         android:topRightRadius="@dimen/round_btn_green_tk_corner"
