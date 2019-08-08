@@ -1,5 +1,6 @@
 package com.example.administrator.petservice.ui.activity;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
@@ -28,24 +29,19 @@ import cn.smssdk.SMSSDK;
 
 import static com.mob.tools.utils.ResHelper.getStringRes;
 
-
 /**
  * 注册Activity
  * @author rfa
  */
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ImageView register_back;
-    private EditText et_phone_number;
-    private ImageView btn_clear_phone_number;
-    private EditText et_register_code;
-    private Button btn_register_code;
-    private ImageView btn_clean_register_code;
+    private ImageView register_back,btn_clear_phone_number,btn_clean_register_code;
+    private Button btn_register_code,btn_save_info;
+    private EditText et_phone_number,et_register_code;
     private TextView tv_tip;
-    private Button btn_save_info;
 
     private int time = 60;
-    private boolean flag = true;
+    private boolean flag = false;
     private String iPhone;//手机号码
     private String iCord;//验证码
 
@@ -63,7 +59,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         registerTime();
     }
 
-    //对于shareSDK的初始化（必要的）
+    /**
+     * 对于shareSDK的初始化（必要的）
+     */
     private void initShareSDK(){
         MobSDK.init(this);
     }
@@ -88,7 +86,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         btn_save_info.setOnClickListener(this);
     }
 
-    //对于EditText的监听事件
+    /**
+     * 对于EditText的监听事件
+     */
     private void initTextWatch(){
         //为输入手机号的EditText添加监听事件
         et_phone_number.addTextChangedListener(new TextWatcher() {
@@ -195,7 +195,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {//提交验证码成功,验证通过
                     Toast.makeText(getApplicationContext(), "验证码校验成功", Toast.LENGTH_SHORT).show();
                     handlerText.sendEmptyMessage(2);
-
+                    flag = true;
+                    judgeFlag(flag);
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){//服务器验证码发送成功
                     reminderText();
                     Toast.makeText(getApplicationContext(), "验证码已经发送", Toast.LENGTH_SHORT).show();
@@ -222,10 +223,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
     };
 
-    //验证码送成功后提示文字
+    /**
+     * 验证码送成功后提示文字
+     */
     private void reminderText() {
         tv_tip.setVisibility(View.VISIBLE);
         handlerText.sendEmptyMessageDelayed(1, 1000);
+    }
+
+
+    /**
+     * @param result 传入的为Flag，Flag在验证码正确后会被赋值为true
+     * 在验证码输入正确后，会跳转到登录界面
+     */
+    private void judgeFlag(boolean result){
+        if(result){
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -269,7 +284,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     if(et_register_code.getText().toString().trim().length()==4){
                         iCord = et_register_code.getText().toString().trim();
                         SMSSDK.submitVerificationCode("86", iPhone, iCord);
-                        flag = false;
                     }else{
                         Toast.makeText(RegisterActivity.this, "请输入完整验证码", Toast.LENGTH_LONG).show();
                         et_register_code.requestFocus();

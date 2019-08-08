@@ -1,8 +1,10 @@
 package com.example.administrator.petservice.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -21,10 +23,29 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.administrator.petservice.R;
 import com.example.administrator.petservice.lisenter.TextInputWatcher;
 import com.example.administrator.petservice.ui.MainActivity;
+import com.example.administrator.petservice.ui.utils.TcpClientConnector;
+import com.mob.MobSDK;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import cn.smssdk.EventHandler;
+import cn.smssdk.SMSSDK;
+
+import static com.mob.tools.utils.ResHelper.getStringRes;
 
 /**
  * 登录Activity
@@ -32,7 +53,7 @@ import com.example.administrator.petservice.ui.MainActivity;
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener  {
 
-    private static final String TAG = LoginActivity.class.getSimpleName();
+    private static final String TAG = "LoginActivity";
     /**
      * The constant LOGIN_RESULT_CODE.
      */
@@ -45,43 +66,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int MSG_AUTH_COMPLETE = 4;
     private static final int MSG_USERID_FOUND = 5;
 
-    private ImageView mTitleBarIvBack;
-    private TextView mTitleBarTvRegister;
-    private TextView mSelectTvQuickLogin;
-    private TextView mSelectTvAccountLogin;
-    private View mSelectLeftLine;
-    private View mSelectRightLine;
-    private EditText mQuickLoginEtPhoneNumber;
-    private ImageView mQuickLoginIvClearPhoneNumber;
-    private EditText mQuickLoginEtCode;
-    private Button mQuickLoginBtnGetCode;
-    private ImageView mQuickLoginIvClearCode;
-    private EditText mEtCheckPicture;
-    private ImageView mIvCheckPicture;
-    private RelativeLayout mLlCheckPicture;
-    private LinearLayout mQuickLoginLayout;
-    private EditText mAccountLoginEtUsername;
-    private ImageView mAccountLoginIvClearUsername;
-    private EditText mAccountLoginEtPassword;
+    private ImageView mTitleBarIvBack,mQuickLoginIvClearPhoneNumber,mQuickLoginIvClearCode,mIvCheckPicture,mAccountLoginIvClearUsername,mAccountLoginIvClearPassword,mIvCheckCode;
+    private ImageView mBottomIvQq,mBottomIvWechat,mBottomIvWeibo,mBottomIvAlipay;
+    private TextView mTitleBarTvRegister,mSelectTvQuickLogin,mSelectTvAccountLogin,mAccountLoginTvForgetPassword,tv_tip;
+    private View mSelectLeftLine,mSelectRightLine;
+    private EditText mQuickLoginEtPhoneNumber,mQuickLoginEtCode,mEtCheckPicture,mAccountLoginEtUsername,mAccountLoginEtPassword,mEtCheckCode;
+    private Button mQuickLoginBtnGetCode,mQuickLoginBtn,mAccountLoginBtn;
     private CheckBox mAccountLoginCheckBox;
-    private ImageView mAccountLoginIvClearPassword;
-    private EditText mEtCheckCode;
-    private ImageView mIvCheckCode;
-    private RelativeLayout mLlCheckCode;
-    private LinearLayout mAccountLoginLayout;
-    private Button mQuickLoginBtn;
-    private Button mAccountLoginBtn;
-    private TextView mAccountLoginTvForgetPassword;
-    private ImageView mBottomIvQq;
-    private ImageView mBottomIvWechat;
-    private ImageView mBottomIvWeibo;
-    private ImageView mBottomIvAlipay;
 
-    private Animation mLeftLineAnimation;
-    private Animation mRightLineAnimation;
+    private RelativeLayout mLlCheckPicture,mLlCheckCode;
+    private LinearLayout mQuickLoginLayout,mAccountLoginLayout;
+
+    private Animation mLeftLineAnimation,mRightLineAnimation;
 
     private int mSelectedTextColor;
     private int mUnselectedTextColor;
+
+    private TcpClientConnector connector;
 
     /**快速登陆界面*/
     private boolean isPhoneNumberNull = true;
@@ -93,25 +94,97 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private boolean isQuickLoginSelected = true;
     private boolean isAccountLoginSelected = false;
     private int mSecCount;
-    private String mPhoneNumber;
 
     private Handler mHandler;
+    private int time = 60;
+    private boolean flag = true;
+    private String iPhone;//手机号码
+    private String iCord;//验证码
+
+    BufferedWriter out;
+    BufferedReader in;
+    private Socket s;
+    String str;
+
+    private Handler handlerTcp = new Handler(){
+
+    };
+
 
     /**
      * @param savedInstanceState
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE); // 去除顶部标题栏
         setContentView(R.layout.activity_login);
 
+        initShareSDK();
+
         initView();
         initAnimation();
         setViewListener();
+        registerTime();
+    }
+
+    private void showmsg(final String ms){   //必须在主线程中进行UI操作
+        runOnUiThread(new Runnable(){
+            @Override
+            public void run() {
+                Toast.makeText(LoginActivity.this, "服务器:"+ms, Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
+    //对于shareSDK的初始化（必要的）
+    private void initShareSDK(){
+        MobSDK.init(this);
+    }
+
+    /**
+     * 初始化布局
+     */
+    private void initView() {
+        mTitleBarIvBack = (ImageView) findViewById(R.id.login_titleBar_iv_back);
+        mTitleBarTvRegister = (TextView) findViewById(R.id.login_titleBar_tv_register);
+        mSelectTvQuickLogin = (TextView) findViewById(R.id.login_select_tv_quickLogin);
+        mSelectTvAccountLogin = (TextView) findViewById(R.id.login_select_tv_accountLogin);
+        mSelectLeftLine = findViewById(R.id.login_select_left_line);
+        mSelectRightLine = findViewById(R.id.login_select_right_line);
+        mQuickLoginEtPhoneNumber = (EditText) findViewById(R.id.login_quick_login_et_phoneNumber);
+        mQuickLoginIvClearPhoneNumber = (ImageView) findViewById(R.id.login_quick_login_iv_clear_phoneNumber);
+        mQuickLoginEtCode = (EditText) findViewById(R.id.login_quick_login_et_code);
+        mQuickLoginBtnGetCode = (Button) findViewById(R.id.login_quick_login_btn_getCode);
+        mQuickLoginIvClearCode = (ImageView) findViewById(R.id.login_quick_login_iv_clear_code);
+        mEtCheckPicture = (EditText) findViewById(R.id.et_check_picture);
+        mIvCheckPicture = (ImageView) findViewById(R.id.iv_check_picture);
+        mLlCheckPicture = (RelativeLayout) findViewById(R.id.ll_check_picture);
+        mQuickLoginLayout = (LinearLayout) findViewById(R.id.login_quick_login_layout);
+        mAccountLoginEtUsername = (EditText) findViewById(R.id.login_account_login_et_username);
+        mAccountLoginIvClearUsername = (ImageView) findViewById(R.id.login_account_login_iv_clear_username);
+        mAccountLoginEtPassword = (EditText) findViewById(R.id.login_account_login_et_password);
+        mAccountLoginCheckBox = (CheckBox) findViewById(R.id.login_account_login_checkBox);
+        mAccountLoginIvClearPassword = (ImageView) findViewById(R.id.login_account_login_iv_clear_password);
+        mEtCheckCode = (EditText) findViewById(R.id.et_check_code);
+        mIvCheckCode = (ImageView) findViewById(R.id.iv_check_code);
+        mLlCheckCode = (RelativeLayout) findViewById(R.id.ll_check_code);
+        mAccountLoginLayout = (LinearLayout) findViewById(R.id.login_account_login_layout);
+        mQuickLoginBtn = (Button) findViewById(R.id.login_quick_login_btn);
+        mAccountLoginBtn = (Button) findViewById(R.id.login_account_login_btn);
+        mAccountLoginTvForgetPassword = (TextView) findViewById(R.id.login_account_login_tv_forget_password);
+        mBottomIvQq = (ImageView) findViewById(R.id.login_bottom_iv_qq);
+        mBottomIvWechat = (ImageView) findViewById(R.id.login_bottom_iv_wechat);
+        mBottomIvWeibo = (ImageView) findViewById(R.id.login_bottom_iv_weibo);
+        mBottomIvAlipay = (ImageView) findViewById(R.id.login_bottom_iv_alipay);
+        tv_tip = findViewById(R.id.tip);
+    }
+
+    /**
+     * 设置监听事件
+     */
     private void setViewListener() {
         //顶部选择
         mTitleBarIvBack.setOnClickListener(this);
@@ -189,40 +262,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    private void initView() {
-        mTitleBarIvBack = (ImageView) findViewById(R.id.login_titleBar_iv_back);
-        mTitleBarTvRegister = (TextView) findViewById(R.id.login_titleBar_tv_register);
-        mSelectTvQuickLogin = (TextView) findViewById(R.id.login_select_tv_quickLogin);
-        mSelectTvAccountLogin = (TextView) findViewById(R.id.login_select_tv_accountLogin);
-        mSelectLeftLine = findViewById(R.id.login_select_left_line);
-        mSelectRightLine = findViewById(R.id.login_select_right_line);
-        mQuickLoginEtPhoneNumber = (EditText) findViewById(R.id.login_quick_login_et_phoneNumber);
-        mQuickLoginIvClearPhoneNumber = (ImageView) findViewById(R.id.login_quick_login_iv_clear_phoneNumber);
-        mQuickLoginEtCode = (EditText) findViewById(R.id.login_quick_login_et_code);
-        mQuickLoginBtnGetCode = (Button) findViewById(R.id.login_quick_login_btn_getCode);
-        mQuickLoginIvClearCode = (ImageView) findViewById(R.id.login_quick_login_iv_clear_code);
-        mEtCheckPicture = (EditText) findViewById(R.id.et_check_picture);
-        mIvCheckPicture = (ImageView) findViewById(R.id.iv_check_picture);
-        mLlCheckPicture = (RelativeLayout) findViewById(R.id.ll_check_picture);
-        mQuickLoginLayout = (LinearLayout) findViewById(R.id.login_quick_login_layout);
-        mAccountLoginEtUsername = (EditText) findViewById(R.id.login_account_login_et_username);
-        mAccountLoginIvClearUsername = (ImageView) findViewById(R.id.login_account_login_iv_clear_username);
-        mAccountLoginEtPassword = (EditText) findViewById(R.id.login_account_login_et_password);
-        mAccountLoginCheckBox = (CheckBox) findViewById(R.id.login_account_login_checkBox);
-        mAccountLoginIvClearPassword = (ImageView) findViewById(R.id.login_account_login_iv_clear_password);
-        mEtCheckCode = (EditText) findViewById(R.id.et_check_code);
-        mIvCheckCode = (ImageView) findViewById(R.id.iv_check_code);
-        mLlCheckCode = (RelativeLayout) findViewById(R.id.ll_check_code);
-        mAccountLoginLayout = (LinearLayout) findViewById(R.id.login_account_login_layout);
-        mQuickLoginBtn = (Button) findViewById(R.id.login_quick_login_btn);
-        mAccountLoginBtn = (Button) findViewById(R.id.login_account_login_btn);
-        mAccountLoginTvForgetPassword = (TextView) findViewById(R.id.login_account_login_tv_forget_password);
-        mBottomIvQq = (ImageView) findViewById(R.id.login_bottom_iv_qq);
-        mBottomIvWechat = (ImageView) findViewById(R.id.login_bottom_iv_wechat);
-        mBottomIvWeibo = (ImageView) findViewById(R.id.login_bottom_iv_weibo);
-        mBottomIvAlipay = (ImageView) findViewById(R.id.login_bottom_iv_alipay);
-    }
 
+    /**
+     * 初始化动画效果
+     */
     private void initAnimation() {
         mSelectedTextColor = getResources().getColor(R.color.app_yellow);
         mUnselectedTextColor = getResources().getColor(R.color.content_color);
@@ -272,14 +315,170 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    //实现验证信息的时间限制
+    private void registerTime(){
+
+        EventHandler eh=new EventHandler(){
+            @Override
+            public void afterEvent(int event, int result, Object data) {
+                Message msg = Message.obtain();
+                msg.arg1 = event;
+                msg.arg2 = result;
+                msg.obj = data;
+                handler.sendMessage(msg);
+            }
+        };
+        SMSSDK.registerEventHandler(eh);
+    }
+
+
+
+    Handler handlerText = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(msg.what==1){
+                if(time>0){
+                    tv_tip.setText("验证码已发送"+time+"秒");
+                    time--;
+                    handlerText.sendEmptyMessageDelayed(1, 1000);
+                }else{
+                    tv_tip.setText("提示信息");
+                    time = 60;
+                    tv_tip.setVisibility(View.GONE);
+                    mQuickLoginBtnGetCode.setVisibility(View.VISIBLE);
+                }
+            }else{
+                mQuickLoginBtnGetCode.setText("");
+                tv_tip.setText("提示信息");
+                time = 60;
+                tv_tip.setVisibility(View.GONE);
+                mQuickLoginBtnGetCode.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int event = msg.arg1;
+            int result = msg.arg2;
+            Object data = msg.obj;
+            Log.e("event", "event="+event);
+            if (result == SMSSDK.RESULT_COMPLETE) {
+                //短信注册成功后，返回Activity,然后提示新好友
+                if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {//提交验证码成功,验证通过
+                    Toast.makeText(getApplicationContext(), "验证码校验成功", Toast.LENGTH_SHORT).show();
+                    handlerText.sendEmptyMessage(2);
+
+
+//                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+//                    startActivity(intent);
+                } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){//服务器验证码发送成功
+                    reminderText();
+                    Toast.makeText(getApplicationContext(), "验证码已经发送", Toast.LENGTH_SHORT).show();
+                }else if (event ==SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES){//返回支持发送验证码的国家列表
+                    Toast.makeText(getApplicationContext(), "获取国家列表成功", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                if(flag){
+                    mQuickLoginBtnGetCode.setVisibility(View.VISIBLE);
+                    Toast.makeText(LoginActivity.this, "验证码获取失败，请重新获取", Toast.LENGTH_SHORT).show();
+                    mQuickLoginEtPhoneNumber.requestFocus();
+                    mQuickLoginBtnGetCode.setVisibility(View.VISIBLE);
+                    tv_tip.setVisibility(View.GONE);
+                }else{
+                    ((Throwable) data).printStackTrace();
+                    int resId = getStringRes(LoginActivity.this, "smssdk_network_error");
+                    Toast.makeText(LoginActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
+                    mQuickLoginEtCode.selectAll();
+                    if (resId > 0) {
+                        Toast.makeText(LoginActivity.this, resId, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }
+    };
+
+    //验证码送成功后提示文字
+    private void reminderText() {
+        tv_tip.setVisibility(View.VISIBLE);
+        handlerText.sendEmptyMessageDelayed(1, 1000);
+    }
+
+    /**
+     * @param v
+     * 根据传入的View的Id设置相应的效果
+     */
     @Override
     public void onClick(View v) {
         Intent intent = null;
         switch (v.getId()) {
             case R.id.login_titleBar_iv_back:
-                intent = new Intent(LoginActivity.this,MainActivity.class);
-                startActivity(intent);
-                finish();
+
+                new Thread(new Runnable(){      //开启线程连接服务端
+                    @Override
+                    public void run() {
+//                Socket socket = null;
+//                while(socket==null){
+//                    try {
+//                        socket = new Socket("47.100.244.211", 9999);
+//                        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+//                        out.write("rfa");
+//                        out.newLine();
+//                        Log.d(TAG, "send data");
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    try {
+//                        InputStream inputStream = socket.getInputStream();
+//                        InputStreamReader inputStreamReader = new InputStreamReader(
+//                                inputStream);
+//                        BufferedReader br = new BufferedReader(inputStreamReader);
+//                        try {
+//                            // 信息的格式：(login||logout||say),发送人,收发人,信息体
+//                            while (true) {
+//                                String msg=br.readLine();
+//                                System.out.println(msg);
+//                                Log.d(TAG, "get data:"+msg);
+//                            }
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    } catch (IOException e1) {
+//                        e1.printStackTrace();
+//                    }
+//                }
+                        try {
+
+                            if(s==null||(!s.isConnected())){
+                                s = new Socket("47.100.244.211", 9999);
+                            }
+                            out=new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+
+                            out.write("rfa");
+                            out.newLine();
+                            out.flush();
+
+                            in=new BufferedReader(new InputStreamReader(s.getInputStream()));
+
+                            int str=in.read();
+                            Log.d(TAG, str+"");
+                            s.close();
+//                    Toast.makeText(LoginActivity.this, str, Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                ).start();
+
+//                intent = new Intent(LoginActivity.this,MainActivity.class);
+//                startActivity(intent);
+
+
                 break;
             case R.id.login_titleBar_tv_register:
                 intent = new Intent(LoginActivity.this,RegisterActivity.class);
@@ -307,48 +506,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mQuickLoginEtCode.setText("");
                 mQuickLoginIvClearCode.setVisibility(View.GONE);
                 break;
-//            case R.id.login_quick_login_btn_getCode:
-//                mPhoneNumber = mQuickLoginEtPhoneNumber.getText().toString();
-//                if (LoginHelperUtil.isPhoneNumber(mPhoneNumber)) {
-//                    BmobManager.getInstance(new BmobMsgSendCallback() {
-//                        @Override
-//                        public void onMsgSendSuccess() {
-//                            ToastUtil.show(LoginActivity.this,R.string.sms_code_send_success);
-//                            //验证码发送成功，倒计时
-//                            setCodeTimeDown();
-//                        }
-//
-//                        @Override
-//                        public void onMsgSendFailure() {
-//                            ToastUtil.show(LoginActivity.this,R.string.sms_code_send_failure);
-//                        }
-//                    }).sendMsgCode(mPhoneNumber);
-//                } else {
-//                    ToastUtil.show(this,R.string.phone_number_incorrect);
-//                }
-//                break;
+            case R.id.login_quick_login_btn_getCode:
+                if(!TextUtils.isEmpty(mQuickLoginEtPhoneNumber.getText().toString().trim())){
+                    if(mQuickLoginEtPhoneNumber.getText().toString().trim().length()==11){
+                        iPhone = mQuickLoginEtPhoneNumber.getText().toString().trim();
+                        SMSSDK.getVerificationCode("86",iPhone);
+                        mQuickLoginEtPhoneNumber.requestFocus();
+                        mQuickLoginBtnGetCode.setVisibility(View.GONE);
+                        tv_tip.setVisibility(View.VISIBLE);
+                    }else{
+                        Toast.makeText(LoginActivity.this, "请输入完整电话号码", Toast.LENGTH_LONG).show();
+                        mQuickLoginEtPhoneNumber.requestFocus();
+                    }
+                }else{
+                    Toast.makeText(LoginActivity.this, "请输入您的电话号码", Toast.LENGTH_LONG).show();
+                    mQuickLoginEtPhoneNumber.requestFocus();
+                }
+                break;
             case R.id.login_quick_login_btn:
-                intent = new Intent(LoginActivity.this,MainActivity.class);
-                startActivity(intent);
-//                mPhoneNumber = mQuickLoginEtPhoneNumber.getText().toString();
-//                String code = mQuickLoginEtCode.getText().toString();
-//                if (LoginHelperUtil.isCodeCorrect(code) && LoginHelperUtil.isPhoneNumber(mPhoneNumber)) {
-//                    BmobManager.getInstance(new BmobLoginCallback() {
-//                        @Override
-//                        public void onLoginSuccess() {
-//                            Log.i(TAG, "onLoginSuccess: 登陆成功");
-//                            ToastUtil.show(LoginActivity.this,R.string.login_success);
-//                        }
-//
-//                        @Override
-//                        public void onLoginFailure() {
-//                            Log.i(TAG, "onLoginFailure: 登陆失败");
-//                            ToastUtil.show(LoginActivity.this,R.string.login_failed);
-//                        }
-//                    }).signOrLoginByMsgCode(mPhoneNumber,code);
-//                } else {
-//                    ToastUtil.showLong(this,R.string.quick_login_input_incorrect);
-//                }
+                if(!TextUtils.isEmpty(mQuickLoginEtCode.getText().toString().trim())){
+                    if(mQuickLoginEtCode.getText().toString().trim().length()==4){
+                        iCord = mQuickLoginEtCode.getText().toString().trim();
+                        SMSSDK.submitVerificationCode("86", iPhone, iCord);
+                        flag = false;
+                    }else{
+                        Toast.makeText(LoginActivity.this, "请输入完整验证码", Toast.LENGTH_LONG).show();
+                        mQuickLoginEtCode.requestFocus();
+                    }
+                }else{
+                    Toast.makeText(LoginActivity.this, "请输入验证码", Toast.LENGTH_LONG).show();
+                    mQuickLoginEtCode.requestFocus();
+                }
                 break;
 //            case R.id.login_account_login_iv_clear_username:
 //                mAccountLoginEtUsername.setText("");
@@ -379,8 +567,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                    ToastUtil.show(this,R.string.login_input_empty);
 //                }
 //                break;
+            case R.id.login_account_login_btn:
+                intent = new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(intent);
+                break;
             case R.id.login_account_login_tv_forget_password:
-
+                intent = new Intent(LoginActivity.this,ForgetPasswordActivity.class);
+                startActivity(intent);
                 break;
 //            case R.id.login_bottom_iv_qq:
 //                Platform qq = ShareSDK.getPlatform(QQ.NAME);

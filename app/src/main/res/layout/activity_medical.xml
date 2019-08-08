@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.MedicalActivity">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--标题栏-->
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/cl_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="#06ff9e"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_alignParentTop="true">
+
+                <ImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="@dimen/space_large"
+                    android:paddingRight="@dimen/space_large"
+                    android:src="@mipmap/home"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_search"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/search_item_background"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    app:layout_constraintLeft_toRightOf="@+id/iv_back"
+                    app:layout_constraintRight_toLeftOf="@+id/iv_map">
+
+                    <EditText
+                        android:id="@+id/edit_query"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="请输入搜索关键字"
+                        android:imeOptions="actionSearch"
+                        android:singleLine="true"
+                        android:textSize="14sp"/>
+
+                    <ImageView
+                        android:id="@+id/iv_clear_search"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/space_normal"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:src="@mipmap/ic_delete"/>
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/space_large"
+                    android:paddingRight="@dimen/space_large"
+                    android:src="@drawable/ic_map"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintRight_toRightOf="parent"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@color/white"
+                android:gravity="center">
+
+                <com.example.administrator.petservice.widget.DropdownButton
+                    android:id="@+id/chooseType"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <View
+                    android:layout_width="0.5dp"
+                    android:layout_height="18dp"
+                    android:background="#dddddd" />
+
+                <com.example.administrator.petservice.widget.DropdownButton
+                    android:id="@+id/chooseLabel"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <View
+                    android:layout_width="0.5dp"
+                    android:layout_height="18dp"
+                    android:background="#dddddd" />
+
+                <com.example.administrator.petservice.widget.DropdownButton
+                    android:id="@+id/chooseOrder"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/divide" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ListView
+                    android:id="@+id/listView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:footerDividersEnabled="false" />
+
+                <View
+                    android:id="@+id/mask"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#80000000" />
+
+                <com.example.administrator.petservice.widget.DropdownListView
+                    android:id="@+id/dropdownType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <com.example.administrator.petservice.widget.DropdownListView
+                    android:id="@+id/dropdownLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <com.example.administrator.petservice.widget.DropdownListView
+                    android:id="@+id/dropdownOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </FrameLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+</RelativeLayout>

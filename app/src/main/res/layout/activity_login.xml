@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!--标题栏-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/common_titleBar_height"
@@ -29,6 +30,7 @@
             android:textSize="@dimen/login_titleBar_register_size"/>
     </RelativeLayout>
 
+    <!--中间内容-->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -111,7 +113,9 @@
                             style="@style/login_editText_style"
                             android:hint="@string/login_input_phoneNumber_hint"
                             android:inputType="number"
-                            android:maxLength="11" />
+                            android:maxLength="11" >
+                            <requestFocus />
+                        </EditText>
 
                         <ImageView
                             android:id="@+id/login_quick_login_iv_clear_phoneNumber"
@@ -135,12 +139,16 @@
                         <Button
                             android:id="@+id/login_quick_login_btn_getCode"
                             style="@style/login_btn_getCode_style" />
-
+                        <TextView
+                            android:id="@+id/tip"
+                            style="@style/login_tip_getCode_style"
+                            android:visibility="gone" />
                         <ImageView
                             android:id="@+id/login_quick_login_iv_clear_code"
                             style="@style/common_clear_input_imageView_style"
-                            android:layout_alignParentRight="false"
-                            android:layout_toLeftOf="@+id/login_quick_login_btn_getCode"
+                            android:layout_alignParentEnd="false"
+                            android:layout_toStartOf="@+id/login_quick_login_btn_getCode"
+                            android:layout_toLeftOf="@id/tip"
                             android:visibility="gone" />
                     </RelativeLayout>
 
@@ -281,7 +289,7 @@
 
                 <Button
                     android:id="@+id/login_account_login_btn"
-                    style="@style/login_btn_style" />
+                    style="@style/login_btn_style"/>
 
                 <TextView
                     android:id="@+id/login_account_login_tv_forget_password"
@@ -300,6 +308,7 @@
 
     </ScrollView>
 
+    <!--底部第三方登录-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

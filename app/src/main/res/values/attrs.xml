@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="VerifyEditView">
+        <attr name="VerifyBorderWidth" format="dimension" />
+        <attr name="VerifyBorderColor" format="color" />
+        <attr name="VerifyBorderRadius" format="dimension" />
+        <attr name="VerifyCodeTextSize" format="dimension" />
+        <attr name="VerifyCodeTextColor" format="color" />
+        <attr name="VerifyCodeLength" format="integer" />
+    </declare-styleable>
+</resources>

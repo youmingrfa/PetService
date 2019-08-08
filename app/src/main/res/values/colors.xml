@@ -62,4 +62,11 @@
     <color name="orange">#ffff6900</color>
     <color name="content_color">#ff687186</color>
     <color name="city_item_bg">#f0f0f0</color>
+
+    <color name="stand_bg">#fff6f6f6</color>
+    <color name="divide">#ffe4e4e4</color>
+    <color name="white_pressed">#ffd5d5d5</color>
+    <color name="font_black_6">#ff666666</color>
+    <item name="green" type="color">#FF3BBD79</item>
+    <color name="font_black_content">#222222</color>
 </resources>
