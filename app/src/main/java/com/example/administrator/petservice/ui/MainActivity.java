@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-
     /**
      * 初始化事件
      */

@@ -35,10 +35,10 @@ import static com.mob.tools.utils.ResHelper.getStringRes;
  */
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ImageView register_back,btn_clear_phone_number,btn_clean_register_code;
-    private Button btn_register_code,btn_save_info;
-    private EditText et_phone_number,et_register_code;
-    private TextView tv_tip;
+    private ImageView registerBack,btnClearPhoneNumber,btnCleanRegisterCode;
+    private Button btnRegisterCode,btnSaveInfo;
+    private EditText etPhoneNumber,etRegisterCode;
+    private TextView tvTip;
 
     private int time = 60;
     private boolean flag = false;
@@ -68,22 +68,22 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void initView(){
-        register_back = findViewById(R.id.register_titleBar_iv_back);
-        et_phone_number = findViewById(R.id.register_et_phoneNumber);
-        btn_clear_phone_number = findViewById(R.id.register_iv_clear_phoneNumber);
-        et_register_code = findViewById(R.id.register_et_code);
-        btn_register_code = findViewById(R.id.register_btn_getCode);
-        btn_clean_register_code = findViewById(R.id.register_iv_clear_code);
-        tv_tip = findViewById(R.id.tip);
-        btn_save_info = findViewById(R.id.save_info);
+        registerBack = findViewById(R.id.register_titleBar_iv_back);
+        etPhoneNumber = findViewById(R.id.register_et_phoneNumber);
+        btnClearPhoneNumber = findViewById(R.id.register_iv_clear_phoneNumber);
+        etRegisterCode = findViewById(R.id.register_et_code);
+        btnRegisterCode = findViewById(R.id.register_btn_getCode);
+        btnCleanRegisterCode = findViewById(R.id.register_iv_clear_code);
+        tvTip = findViewById(R.id.tip);
+        btnSaveInfo = findViewById(R.id.save_info);
     }
 
     private void initData(){
-        register_back.setOnClickListener(this);
-        btn_clear_phone_number.setOnClickListener(this);
-        btn_register_code.setOnClickListener(this);
-        btn_clean_register_code.setOnClickListener(this);
-        btn_save_info.setOnClickListener(this);
+        registerBack.setOnClickListener(this);
+        btnClearPhoneNumber.setOnClickListener(this);
+        btnRegisterCode.setOnClickListener(this);
+        btnCleanRegisterCode.setOnClickListener(this);
+        btnSaveInfo.setOnClickListener(this);
     }
 
     /**
@@ -91,7 +91,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      */
     private void initTextWatch(){
         //为输入手机号的EditText添加监听事件
-        et_phone_number.addTextChangedListener(new TextWatcher() {
+        etPhoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -99,23 +99,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(!et_phone_number.getText().equals("")){
-                    btn_clear_phone_number.setVisibility(View.VISIBLE);
+                if(!etPhoneNumber.getText().equals("")){
+                    btnClearPhoneNumber.setVisibility(View.VISIBLE);
                 }
                 else{
-                    btn_clear_phone_number.setVisibility(View.GONE);
+                    btnClearPhoneNumber.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(et_phone_number.getText().equals("")){
-                    btn_clear_phone_number.setVisibility(View.GONE);
+                if(etPhoneNumber.getText().equals("")){
+                    btnClearPhoneNumber.setVisibility(View.GONE);
                 }
             }
         });
         //为输入的验证码EditText设置监听事件
-        et_register_code.addTextChangedListener(new TextWatcher() {
+        etRegisterCode.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -123,18 +123,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(!et_register_code.getText().equals("")){
-                    btn_clean_register_code.setVisibility(View.VISIBLE);
+                if(!etRegisterCode.getText().equals("")){
+                    btnCleanRegisterCode.setVisibility(View.VISIBLE);
                 }
                 else{
-                    btn_clean_register_code.setVisibility(View.GONE);
+                    btnCleanRegisterCode.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(et_register_code.getText().equals("")){
-                    btn_clean_register_code.setVisibility(View.GONE);
+                if(etRegisterCode.getText().equals("")){
+                    btnCleanRegisterCode.setVisibility(View.GONE);
                 }
             }
         });
@@ -163,21 +163,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             super.handleMessage(msg);
             if(msg.what==1){
                 if(time>0){
-                    tv_tip.setText("验证码已发送"+time+"秒");
+                    tvTip.setText("验证码已发送"+time+"秒");
                     time--;
                     handlerText.sendEmptyMessageDelayed(1, 1000);
                 }else{
-                    tv_tip.setText("提示信息");
+                    tvTip.setText("提示信息");
                     time = 60;
-                    tv_tip.setVisibility(View.GONE);
-                    btn_register_code.setVisibility(View.VISIBLE);
+                    tvTip.setVisibility(View.GONE);
+                    btnRegisterCode.setVisibility(View.VISIBLE);
                 }
             }else{
-                et_register_code.setText("");
-                tv_tip.setText("提示信息");
+                etRegisterCode.setText("");
+                tvTip.setText("提示信息");
                 time = 60;
-                tv_tip.setVisibility(View.GONE);
-                btn_register_code.setVisibility(View.VISIBLE);
+                tvTip.setVisibility(View.GONE);
+                btnRegisterCode.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -205,16 +205,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
             } else {
                 if(flag){
-                    btn_register_code.setVisibility(View.VISIBLE);
+                    btnRegisterCode.setVisibility(View.VISIBLE);
                     Toast.makeText(RegisterActivity.this, "验证码获取失败，请重新获取", Toast.LENGTH_SHORT).show();
-                    et_phone_number.requestFocus();
-                    btn_register_code.setVisibility(View.VISIBLE);
-                    tv_tip.setVisibility(View.GONE);
+                    etPhoneNumber.requestFocus();
+                    btnRegisterCode.setVisibility(View.VISIBLE);
+                    tvTip.setVisibility(View.GONE);
                 }else{
                     ((Throwable) data).printStackTrace();
                     int resId = getStringRes(RegisterActivity.this, "smssdk_network_error");
                     Toast.makeText(RegisterActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
-                    et_register_code.selectAll();
+                    etRegisterCode.selectAll();
                     if (resId > 0) {
                         Toast.makeText(RegisterActivity.this, resId, Toast.LENGTH_SHORT).show();
                     }
@@ -227,7 +227,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * 验证码送成功后提示文字
      */
     private void reminderText() {
-        tv_tip.setVisibility(View.VISIBLE);
+        tvTip.setVisibility(View.VISIBLE);
         handlerText.sendEmptyMessageDelayed(1, 1000);
     }
 
@@ -252,45 +252,45 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 break;
                 //清空输入的手机号码
             case R.id.register_iv_clear_phoneNumber:
-                et_phone_number.setText("");
-                btn_clear_phone_number.setVisibility(View.GONE);
+                etPhoneNumber.setText("");
+                btnClearPhoneNumber.setVisibility(View.GONE);
                 break;
                 //短信注册码的发送
             case R.id.register_btn_getCode:
-                if(!TextUtils.isEmpty(et_phone_number.getText().toString().trim())){
-                    if(et_phone_number.getText().toString().trim().length()==11){
-                        iPhone = et_phone_number.getText().toString().trim();
+                if(!TextUtils.isEmpty(etPhoneNumber.getText().toString().trim())){
+                    if(etPhoneNumber.getText().toString().trim().length()==11){
+                        iPhone = etPhoneNumber.getText().toString().trim();
                         SMSSDK.getVerificationCode("86",iPhone);
-                        et_register_code.requestFocus();
-                        btn_register_code.setVisibility(View.GONE);
-                        tv_tip.setVisibility(View.VISIBLE);
+                        etRegisterCode.requestFocus();
+                        btnRegisterCode.setVisibility(View.GONE);
+                        tvTip.setVisibility(View.VISIBLE);
                     }else{
                         Toast.makeText(RegisterActivity.this, "请输入完整电话号码", Toast.LENGTH_LONG).show();
-                        et_phone_number.requestFocus();
+                        etPhoneNumber.requestFocus();
                     }
                 }else{
                     Toast.makeText(RegisterActivity.this, "请输入您的电话号码", Toast.LENGTH_LONG).show();
-                    et_phone_number.requestFocus();
+                    etPhoneNumber.requestFocus();
                 }
                 break;
                 //清空输入的注册码
             case R.id.register_iv_clear_code:
-                et_register_code.setText("");
-                btn_clean_register_code.setVisibility(View.GONE);
+                etRegisterCode.setText("");
+                btnCleanRegisterCode.setVisibility(View.GONE);
                 break;
                 //注册按钮
             case R.id.save_info:
-                if(!TextUtils.isEmpty(et_register_code.getText().toString().trim())){
-                    if(et_register_code.getText().toString().trim().length()==4){
-                        iCord = et_register_code.getText().toString().trim();
+                if(!TextUtils.isEmpty(etRegisterCode.getText().toString().trim())){
+                    if(etRegisterCode.getText().toString().trim().length()==4){
+                        iCord = etRegisterCode.getText().toString().trim();
                         SMSSDK.submitVerificationCode("86", iPhone, iCord);
                     }else{
                         Toast.makeText(RegisterActivity.this, "请输入完整验证码", Toast.LENGTH_LONG).show();
-                        et_register_code.requestFocus();
+                        etRegisterCode.requestFocus();
                     }
                 }else{
                     Toast.makeText(RegisterActivity.this, "请输入验证码", Toast.LENGTH_LONG).show();
-                    et_register_code.requestFocus();
+                    etRegisterCode.requestFocus();
                 }
                 break;
             default:

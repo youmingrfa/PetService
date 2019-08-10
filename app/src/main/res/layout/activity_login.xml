@@ -289,6 +289,7 @@
 
                 <Button
                     android:id="@+id/login_account_login_btn"
+                    android:enabled="true"
                     style="@style/login_btn_style"/>
 
                 <TextView

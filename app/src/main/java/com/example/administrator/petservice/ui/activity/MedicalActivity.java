@@ -1,5 +1,6 @@
 package com.example.administrator.petservice.ui.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -40,8 +41,11 @@ public class MedicalActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
+        Intent intent = null;
         switch ((view.getId())){
             case R.id.iv_map:
+                intent = new Intent(this,MapActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;
