@@ -14,14 +14,12 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.administrator.petservice.R;
 import com.example.administrator.petservice.db.RecordsDao;
-import com.example.administrator.petservice.ui.MainActivity;
 import com.example.administrator.petservice.ui.adapter.HotSearchAdapter;
 import com.zhy.view.flowlayout.FlowLayout;
 import com.zhy.view.flowlayout.TagAdapter;

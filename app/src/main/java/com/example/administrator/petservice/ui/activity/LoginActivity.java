@@ -1,6 +1,5 @@
 package com.example.administrator.petservice.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,20 +26,16 @@ import android.widget.Toast;
 
 import com.example.administrator.petservice.R;
 import com.example.administrator.petservice.lisenter.TextInputWatcher;
-import com.example.administrator.petservice.ui.MainActivity;
 import com.example.administrator.petservice.ui.utils.TcpClientConnector;
 import com.mob.MobSDK;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.List;
 
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
@@ -106,10 +101,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Socket s;
     String str;
 
-    private Handler handlerTcp = new Handler(){
-
-    };
-
 
     /**
      * @param savedInstanceState
@@ -127,16 +118,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         initAnimation();
         setViewListener();
         registerTime();
-    }
-
-    private void showmsg(final String ms){   //必须在主线程中进行UI操作
-        runOnUiThread(new Runnable(){
-            @Override
-            public void run() {
-                Toast.makeText(LoginActivity.this, "服务器:"+ms, Toast.LENGTH_SHORT).show();
-            }
-        });
-
     }
 
     //对于shareSDK的初始化（必要的）
@@ -420,39 +401,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 new Thread(new Runnable(){      //开启线程连接服务端
                     @Override
                     public void run() {
-//                Socket socket = null;
-//                while(socket==null){
-//                    try {
-//                        socket = new Socket("47.100.244.211", 9999);
-//                        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-//                        out.write("rfa");
-//                        out.newLine();
-//                        Log.d(TAG, "send data");
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    try {
-//                        InputStream inputStream = socket.getInputStream();
-//                        InputStreamReader inputStreamReader = new InputStreamReader(
-//                                inputStream);
-//                        BufferedReader br = new BufferedReader(inputStreamReader);
-//                        try {
-//                            // 信息的格式：(login||logout||say),发送人,收发人,信息体
-//                            while (true) {
-//                                String msg=br.readLine();
-//                                System.out.println(msg);
-//                                Log.d(TAG, "get data:"+msg);
-//                            }
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    } catch (IOException e1) {
-//                        e1.printStackTrace();
-//                    }
-//                }
                         try {
-
                             if(s==null||(!s.isConnected())){
                                 s = new Socket("47.100.244.211", 9999);
                             }
@@ -461,12 +410,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             out.write("rfa");
                             out.newLine();
                             out.flush();
+                            Log.d(TAG, "send data");
 
                             in=new BufferedReader(new InputStreamReader(s.getInputStream()));
 
-                            int str=in.read();
-                            Log.d(TAG, str+"");
-                            s.close();
+                            String str=in.readLine();
+                            Log.d(TAG, "get data:"+str);
+//                            s.close();
 //                    Toast.makeText(LoginActivity.this, str, Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             e.printStackTrace();

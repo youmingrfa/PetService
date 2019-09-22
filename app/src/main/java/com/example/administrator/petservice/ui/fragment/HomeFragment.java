@@ -3,6 +3,8 @@ package com.example.administrator.petservice.ui.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,8 @@ import com.example.administrator.petservice.ui.activity.HistorySearchActivity;
 import com.example.administrator.petservice.ui.activity.MedicalActivity;
 import com.example.administrator.petservice.ui.activity.StoreActivity;
 import com.example.administrator.petservice.ui.activity.WashActivity;
+import com.example.administrator.petservice.ui.adapter.HotSearchAdapter;
+import com.example.administrator.petservice.ui.adapter.RecommedFoodAdapter;
 import com.example.administrator.petservice.widget.BannerLoader;
 import com.youth.banner.Banner;
 
@@ -29,6 +33,7 @@ import static com.example.administrator.petservice.ui.utils.ImageUtil.imageUrls;
  */
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
+	private RecyclerView recommendFoodRecyclerView;
 	private LinearLayout searchBar,medicalModule,washModule,careModule,storeModule;
 	private Banner banner;
 
@@ -51,7 +56,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 		washModule = view.findViewById(R.id.wash_module);
 		careModule = view.findViewById(R.id.care_module);
 		storeModule = view.findViewById(R.id.store_module);
-
+		recommendFoodRecyclerView = view.findViewById(R.id.recommendFoodRecyclerView);
 	}
 
 	private void initData(){
@@ -62,9 +67,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 			imageList.add(imageUrls[i]);
 		banner.setImages(imageList);
 		banner.start();
+		//RecyclerView的设置
+		final StaggeredGridLayoutManager layoutManager =
+				new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
 
-
-
+		recommendFoodRecyclerView.setLayoutManager(layoutManager);
+		RecommedFoodAdapter recommedFoodAdapter = new RecommedFoodAdapter(getContext());
+		recommedFoodAdapter.notifyDataSetChanged();
+		recommendFoodRecyclerView.setAdapter(recommedFoodAdapter);
 	}
 
 	private void setClickListener(){

@@ -28,35 +28,14 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true">
                 <ImageView
-                    android:id="@+id/good_photo"
-                    android:layout_width="@dimen/good_image_width"
-                    android:layout_height="@dimen/good_image_height"
-                    android:layerType="software"
-                    android:scaleType="centerCrop" />
-                <ImageView
-                    android:id="@+id/good_icon"
+                    android:id="@+id/good_image"
                     android:layout_width="@dimen/good_image_width"
                     android:layout_height="@dimen/good_image_height"
                     android:layerType="software"
                     android:scaleType="centerCrop"
-                    android:src="@mipmap/pic_b"/>
-                <ImageView
-                    android:id="@+id/good_appointment_img"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layerType="software"
-                    android:scaleType="centerCrop"
-                    android:src="@mipmap/appointment_img"/>
+                    android:src="@drawable/ic_map"/>
             </FrameLayout>
-            
-            <ProgressBar
-                android:id="@+id/good_loading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                style="?android:attr/progressBarStyleSmall"
-                android:indeterminateDrawable="@drawable/progressbar"
-                android:visibility="gone"/>
+
         </RelativeLayout>
 
         <LinearLayout
@@ -81,7 +60,7 @@
                         android:layout_alignParentRight="true"
                         android:text="0.5mm"
                         android:textSize="@dimen/size_17"
-                        android:visibility="visible"/>
+                        android:visibility="gone"/>
                     <TextView
                         android:id="@+id/good_tv_title"
                         android:layout_width="match_parent"
@@ -104,7 +83,8 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/fresh_order_img"/>
+                        android:src="@mipmap/fresh_order_img"
+                        android:visibility="gone"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -123,20 +103,7 @@
                     tools:text="[三里屯]正院大宅门(SOHO店)四人餐一份"
                     android:textColor="@color/value_color"
                     android:textSize="@dimen/size_18"/>
-                <RatingBar
-                    android:id="@+id/good_comment_score"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/good_ratingBar_marginTop"
-                    android:layout_marginBottom="@dimen/good_ratingBar_marginBottom"
-                    android:clickable="false"
-                    android:isIndicator="true"
-                    android:maxHeight="@dimen/good_ratingBar_maxHeight"
-                    android:minHeight="@dimen/good_ratingBar_minHeight"
-                    android:numStars="5"
-                    android:progressDrawable="@drawable/ratingbar_level_star"
-                    android:rating="3.5"
-                    android:visibility="gone"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -150,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_weight="0"
-                    tools:text="168"
+                    tools:text="￥168"
                     android:textColor="@color/good_price_color"
                     android:textSize="@dimen/size_23"/>
                 <TextView
@@ -162,7 +129,7 @@
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text="150"
+                    tools:text="￥150"
                     android:textColor="@color/value_color"
                     android:textSize="@dimen/size_17"/>
                 <TextView

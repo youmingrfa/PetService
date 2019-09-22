@@ -1,4 +1,4 @@
-package com.example.administrator.petservice.ui;
+package com.example.administrator.petservice.ui.activity;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -42,26 +42,8 @@ public class MainActivity extends AppCompatActivity  {
         initView();
         initData();
         initListener();
-
-
     }
 
-    /**
-     * @param savedInstanceState
-     * 初始化Fragment，并把HomeFragment设立为默认选中的
-     */
-    public void initFragment(Bundle savedInstanceState) {
-        //判断activity是否重建，如果不是，则不需要重新建立fragment.
-        if (savedInstanceState == null) {
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            if (homeFragment == null) {
-                homeFragment = new HomeFragment();
-            }
-            isFragment = homeFragment;
-            ft.replace(R.id.container, homeFragment).commit();
-        }
-    }
 
     /**
      * 初始化布局
@@ -114,6 +96,24 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
     }
+
+    /**
+     * @param savedInstanceState
+     * 初始化Fragment，并把HomeFragment设立为默认选中的
+     */
+    public void initFragment(Bundle savedInstanceState) {
+        //判断activity是否重建，如果不是，则不需要重新建立fragment.
+        if (savedInstanceState == null) {
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            if (homeFragment == null) {
+                homeFragment = new HomeFragment();
+            }
+            isFragment = homeFragment;
+            ft.replace(R.id.container, homeFragment).commit();
+        }
+    }
+
 
     /**
      * @param from
